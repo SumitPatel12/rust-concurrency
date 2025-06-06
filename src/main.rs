@@ -10,4 +10,6 @@ pub mod lock;
 pub mod memory_ordering;
 pub mod parking_and_condition_variables;
 
-fn main() {}
+fn main() {
+    memory_ordering::sequentially_consistent_ordering();
+}
