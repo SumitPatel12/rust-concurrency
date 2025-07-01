@@ -5,6 +5,7 @@ use std::sync::Arc;
 use std::thread::{self};
 
 pub mod atomics;
+pub mod crust_of_rust;
 pub mod interior_mutability;
 pub mod lock;
 pub mod memory_ordering;
@@ -13,6 +14,5 @@ pub mod spin_lock_guard;
 pub mod spin_lock_guard_without_lifetime;
 
 fn main() {
-    spin_lock_guard::spin_lock_test();
-    spin_lock_guard_without_lifetime::spin_lock_without_lifetime();
+    crust_of_rust::ref_cell::test_ref_cell();
 }
