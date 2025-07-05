@@ -12,6 +12,4 @@ pub mod parking_and_condition_variables;
 pub mod spin_lock_guard;
 pub mod spin_lock_guard_without_lifetime;
 
-fn main() {
-    crust_of_rust::ref_cell::test_ref_cell();
-}
+fn main() {}

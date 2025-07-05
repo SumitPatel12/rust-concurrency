@@ -31,8 +31,6 @@ impl<T> Cell<T> {
 
 #[cfg(test)]
 mod test {
-    use super::Cell;
-
     // fn incorrect() {
     //     use std::sync::Arc;
 

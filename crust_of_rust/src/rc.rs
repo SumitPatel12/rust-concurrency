@@ -60,7 +60,8 @@ impl<T> Drop for Rc<T> {
         let count = &inner.refcount.get();
 
         if *count == 1 {
-            // inner is just a reference, no need to explicitly drop it
+            // inner is just a reference, no need to explicitly drop it, we're just being paranoid.
+            drop(self.inner);
             // SAFETY: This is the sole reference to the RcInner, meaning we can drop it.
             let _ = unsafe { Box::from_raw(self.inner.as_ptr()) };
         } else {
