@@ -52,7 +52,7 @@ impl<'a> Iterator for StrSplit<'a> {
             // self.remainder has 'a lifetime and "" has 'static lifetime.
             // Know that 'static lifetime lives for the entire lifetime of the program.
             // The compiler doesn't complaint about this because anything that has the same type but a longer lifetime can be assigned to one with a shorter lifetime.
-            // Because it is guaranteed that it will be living for as long the shorter one does the compiler is fine with it.
+            // Because it is guaranteed that it will be living for as long the shorter one does, the compiler is fine with it.
             self.remainder = "";
             Some(remaining_string)
         } else {
@@ -64,7 +64,7 @@ impl<'a> Iterator for StrSplit<'a> {
 #[test]
 fn initial_working_test() {
     let haystack = "s o m e t h i n g t o r e f l e c t u p o n";
-    let letters = StrSplit::new(haystack, " ").collect::<Vec<&str>>();
+    let letters: Vec<_> = StrSplit::new(haystack, " ").collect();
 
     assert_eq!(
         letters,
