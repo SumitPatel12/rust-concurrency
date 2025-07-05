@@ -1,6 +1,3 @@
-[package]
-name = "rust-concurrency"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
+[workspace]
+members = ["crust_of_rust", "rust-concurrency"]
+resolver = "3"

@@ -5,7 +5,6 @@ use std::sync::Arc;
 use std::thread::{self};
 
 pub mod atomics;
-pub mod crust_of_rust;
 pub mod interior_mutability;
 pub mod lock;
 pub mod memory_ordering;

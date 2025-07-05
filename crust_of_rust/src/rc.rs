@@ -1,7 +1,6 @@
+use crate::cell::Cell;
 use std::marker::PhantomData;
 use std::ptr::NonNull;
-
-use crate::crust_of_rust::cell::Cell;
 
 struct RcInner<T> {
     value: T,
@@ -61,7 +60,7 @@ impl<T> Drop for Rc<T> {
         let count = &inner.refcount.get();
 
         if *count == 1 {
-            let _ = drop(inner);
+            // inner is just a reference, no need to explicitly drop it
             // SAFETY: This is the sole reference to the RcInner, meaning we can drop it.
             let _ = unsafe { Box::from_raw(self.inner.as_ptr()) };
         } else {

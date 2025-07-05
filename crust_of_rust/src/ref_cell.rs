@@ -1,4 +1,4 @@
-use crate::crust_of_rust::cell::Cell;
+use crate::cell::Cell;
 use std::cell::UnsafeCell;
 
 #[derive(Clone, Copy)]
