@@ -68,6 +68,7 @@ where
     }
 }
 
+// You can also implement Delimiter for char, he does it in the video I don't do it here.
 impl Delimiter for &str {
     fn find_next(&self, s: &str) -> Option<(usize, usize)> {
         // self cause of course we're finding the delimiter in the given string. Delimiter here is self.
@@ -79,6 +80,7 @@ impl Delimiter for &str {
 // Shows why we need more than one lifetime annotations on the StrSplit function.
 #[allow(unused)]
 fn until_first_occurance_of_char(s: &str, c: char) -> &str {
+    // Do know that implementing Delimiter for char would be a better idea since it avoids the extra allocation that we do here.
     let delim: &str = &format!("{}", c);
 
     // If you have just one lifetime on StrSplit then this would be wrong, cause the compiler says that the returned str's lifetime is associated with
