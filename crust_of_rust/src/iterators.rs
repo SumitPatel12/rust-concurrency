@@ -1,5 +1,6 @@
 // Fair warning we're gonig full comment mode for these things. IT IS NOT AI GENERATED. STOP THE SLANDER!!
 // I had to write that goofy ass comment. :shrug_emote:
+// I'm gonna have this on all files :toll_face_emote:
 
 // Iterator is a trait first of all. The most important aspect of it:
 //   1. It has an Item type, which drives what the iterator will yield.
@@ -48,6 +49,12 @@ where
     type Item = <O::Item as IntoIterator>::Item;
 
     fn next(&mut self) -> Option<Self::Item> {
+        // We keep the state of the inner elements in the struct itself. This is because we need to yield the next element from the inner iterator.
+        // So, we simply loop over the following code:
+        //  1. If the inner iterator has a value return it.
+        //  2. Otherwise set the inner iterator to the next outer element.
+        //  3. If it is empty it'd return back none.
+        //  4. Otherwise set the inner iterator to the element of value yielded by the outer one and go to step 1.
         loop {
             if let Some(ref mut inner_iterator) = self.inner {
                 if let Some(item) = inner_iterator.next() {
