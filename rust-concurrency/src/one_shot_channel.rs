@@ -9,29 +9,32 @@ pub struct OneShotChannel<T> {
     // The message to be stored, Option<T> is not used to avoid excess memory overhead.
     message: UnsafeCell<MaybeUninit<T>>,
 
+    // Indicates whether a message is being sent.
+    in_use: AtomicBool,
+
     // Bool check of whether there is any message to be consumed from the channel.
     ready: AtomicBool,
 }
 
 unsafe impl<T> Sync for OneShotChannel<T> where T: Send {}
 
-// Issues with this:
-//  1. Sender race conditions, calling send more than once would result in overriding of data even if a receiver is actively trying to consume it.
-//  2. Two threads concurrently trying to send, would also result in race conditions.
-//  3. Calling the receive more than once can result in the message being copied, even if it was not a Copy type.
-//  4. We once again never drop anything, even after our senders and receivers are dropped, the message would not be dropped since MaybeUninit is unsafe and doesn't have it's own checks.
+// There might still be issues with this, I'm just not good enought to see those :shrug:.
 impl<T> OneShotChannel<T> {
     pub fn new() -> Self {
-        // Of course the new function returns an unitialized message and an atomic bool set to false.
+        // Of course the new function returns an unitialized message, in_use, and ready are of course set to false.
         Self {
             message: UnsafeCell::new(MaybeUninit::uninit()),
+            in_use: AtomicBool::new(false),
             ready: AtomicBool::new(false),
         }
     }
 
-    // We've punted the responsibility of making sure the message is there and such to the caller.
-    /// SAFETY: Only call this once. Calling it more than once can lead to race conditions.
-    pub unsafe fn send(&self, message: T) {
+    pub fn send(&self, message: T) {
+        // SAFETY: Let them continue only if in_use is false, and we atomically set it to true to prevent anyone else from entering.
+        if !self.in_use.swap(true, Ordering::Relaxed) {
+            panic!("Cannot send more than one message.");
+        }
+
         unsafe { (*self.message.get()).write(message) };
 
         // Release ordering casue this makes sure that the receiver get's to the message only after it's been initialized.
@@ -39,11 +42,27 @@ impl<T> OneShotChannel<T> {
     }
 
     pub fn has_message(&self) -> bool {
-        self.ready.load(Ordering::Acquire)
+        self.ready.load(Ordering::Relaxed)
     }
 
-    /// SAFETY: Only call this once.
-    pub unsafe fn receive(&self) -> T {
+    /// Panics if no message is available, or if the message was already consumed.
+    /// TIP: Use `has_message` to first.
+    pub fn receive(&self) -> T {
+        // Check if the value was true and set it to false afterwards to indicate that we've consumed the message.
+        if !self.ready.swap(false, Ordering::Acquire) {
+            panic!("No message available.")
+        }
+
+        // SAFETY: The above check gaurantees that the message is present.
         unsafe { (*self.message.get()).assume_init_read() }
+    }
+}
+
+impl<T> Drop for OneShotChannel<T> {
+    fn drop(&mut self) {
+        // SAFETY: If there was a message waiting to be consumed and all the channeld drops drop the message
+        if *self.ready.get_mut() {
+            unsafe { self.message.get_mut().assume_init_drop() }
+        }
     }
 }

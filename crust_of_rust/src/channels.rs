@@ -1,6 +1,6 @@
 // Fair warning we're gonig full comment mode for these things. IT IS NOT AI GENERATED. STOP THE SLANDER!!
 // I had to write that goofy ass comment. :shrug_emote:
-// I'm gonna have this on all files :toll_face_emote:
+// I'm gonna have this on all files :troll_face_emote:
 
 // Channel is simply a medium through which we can send data from one place and receive it at a different one.
 // It is multi producer, single consumer (mpsc).
